@@ -1,0 +1,5 @@
+{
+  "aws_source_ami": "ami-1e339e71",
+  "aws_instance_type": "t2.micro",
+  "aws_ssh_user": "ubuntu"
+}

@@ -1,0 +1,63 @@
+{
+  "variables": {
+    "aws_source_ami": "",
+    "aws_instance_type": "",
+    "aws_ssh_user": "",
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "mysql_root_pwd": ""
+  },
+
+  "builders": [
+  {
+    "type": "amazon-ebs",
+    "region": "eu-central-1",
+    "availability_zone": "eu-central-1a",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "source_ami": "{{user `aws_source_ami`}}",
+    "ami_description": "Image for DevOps gathering demo.",
+    "ssh_timeout": "10m",
+    "instance_type": "{{user `aws_instance_type`}}",
+    "ssh_username": "{{user `aws_ssh_user`}}",
+    "ssh_pty" : true,
+    "ami_name": "devops-ami-{{user `aws_source_ami`}}-{{timestamp}}",
+
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/sdb",
+        "volume_type": "gp2",
+        "volume_size": 256,
+        "delete_on_termination": true
+      }
+    ],
+
+    "tags": {
+      "Name": "demo-image",
+      "Role": "demo"
+    }
+  }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [ "sleep 10" ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/default.sh",
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    },
+    {
+       "type": "shell",
+       "script": "scripts/mysql.sh",
+       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}' {{user `mysql_root_pwd`}}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/apache.sh",
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    }
+  ]
+}
