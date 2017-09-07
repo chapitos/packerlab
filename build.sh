@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 ACCESS_KEY=$1
 SECRET_KEY=$2
-MYSQL_ROOT_PWD=$3
 
 function help {
   echo "USAGE: ${0} AWS_ACCESS_KEY AWS_SECRET_KEY MYSQL_ROOT_PWD"
@@ -9,7 +8,7 @@ function help {
   exit 1
 }
 
-if [[ $# != 3 ]]
+if [[ $# != 2 ]]
 then
   help
 fi
@@ -22,5 +21,5 @@ fi
 #             -var "aws_secret_key=$SECRET_KEY" \
 #             templates/mysql_anonymizer_ami_template.json
 
-packer build -var-file=vars/lab.json -var "aws_access_key=$ACCESS_KEY" -var "aws_secret_key=$SECRET_KEY" -var "mysql_root_pwd=$MYSQL_ROOT_PWD" templates/demo_template.json
+packer build -var-file=vars/lab.json -var "aws_access_key=$ACCESS_KEY" -var "aws_secret_key=$SECRET_KEY" templates/demo_template.json
 

@@ -4,38 +4,78 @@
     "aws_instance_type": "",
     "aws_ssh_user": "",
     "aws_access_key": "",
-    "aws_secret_key": "",
-    "mysql_root_pwd": ""
+    "aws_secret_key": ""
   },
 
   "builders": [
+  #{
+  #  "access_key": "{{user `aws_access_key`}}",
+  #  "secret_key": "{{user `aws_secret_key`}}",
+  #  "type": "amazon-ebs",
+  #  "region": "eu-central-1",
+  #  "availability_zone": "eu-central-1a",
+  #  "instance_type": "{{user `aws_instance_type`}}",
+  #  "ssh_username": "{{user `aws_ssh_user`}}",
+  #  "ssh_timeout": "10m",
+  #  "ssh_pty" : true,
+  #  "source_ami": "{{user `aws_source_ami`}}",
+  #  "ami_description": "Image for DevOps gathering demo.",
+  #  "ami_name": "devops-{{user `aws_source_ami`}}-{{timestamp}}",
+
+  #  "ami_block_device_mappings": [
+  #    {
+  #      "device_name": "/dev/sdb",
+  #      "volume_type": "gp2",
+  #      "volume_size": 20,
+  #      "delete_on_termination": true
+  #    }
+  #  ],
+
+  #  "tags": {
+  #    "Name": "demo-image",
+  #    "Role": "demo"
+  #  }
+  #},
   {
-    "type": "amazon-ebs",
-    "region": "eu-central-1",
-    "availability_zone": "eu-central-1a",
-    "access_key": "{{user `aws_access_key`}}",
-    "secret_key": "{{user `aws_secret_key`}}",
-    "source_ami": "{{user `aws_source_ami`}}",
-    "ami_description": "Image for DevOps gathering demo.",
-    "ssh_timeout": "10m",
-    "instance_type": "{{user `aws_instance_type`}}",
-    "ssh_username": "{{user `aws_ssh_user`}}",
-    "ssh_pty" : true,
-    "ami_name": "devops-{{user `aws_source_ami`}}-{{timestamp}}",
-
-    "ami_block_device_mappings": [
-      {
-        "device_name": "/dev/sdb",
-        "volume_type": "gp2",
-        "volume_size": 20,
-        "delete_on_termination": true
-      }
+    "type": "virtualbox-iso",
+    "guest_os_type": "Ubuntu_64",
+    "iso_url": "http://releases.ubuntu.com/16.04/ubuntu-16.04.3-server-amd64.iso",
+    "iso_checksum": "a06cd926f5855d4f21fb4bc9978a35312f815fbda0d0ef7fdc846861f4fc4600",
+    "iso_checksum_type": "sha256",
+    "output_directory": "output-ubuntu-16.04-amd64-{{build_type}}",
+    "vm_name": "devops-ubuntu-16.04-amd64",
+    "disk_size": "40000",
+    "headless": "false",
+    "http_directory": "http",
+    "boot_wait": "5s",
+    "boot_command": [
+      "<enter><wait>",
+      "<f6><esc>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+      "<bs><bs><bs>",
+      "/install/vmlinuz ",
+      "initrd=/install/initrd.gz ",
+      "net.ifnames=0 ",
+      "auto-install/enable=true ",
+      "debconf/priority=critical ",
+      "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu-16.04/preseed.cfg ",
+      "<enter>"
     ],
-
-    "tags": {
-      "Name": "demo-image",
-      "Role": "demo"
-    }
+    "ssh_timeout": "10m",
+    "ssh_username": "ubuntu",
+    "ssh_password": "adm1n",
+    "shutdown_command": "sudo systemctl poweroff",
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "512"],
+      ["modifyvm", "{{.Name}}", "--cpus", "1"]
+    ]
   }
   ],
 
@@ -52,7 +92,7 @@
     {
       "type": "file",
       "source": "files/index.html",
-      "destination": "/tmpindex.html"
+      "destination": "/tmp/index.html"
 
     },
     {
