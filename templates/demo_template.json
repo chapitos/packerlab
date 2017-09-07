@@ -21,13 +21,13 @@
     "instance_type": "{{user `aws_instance_type`}}",
     "ssh_username": "{{user `aws_ssh_user`}}",
     "ssh_pty" : true,
-    "ami_name": "devops-ami-{{user `aws_source_ami`}}-{{timestamp}}",
+    "ami_name": "devops-{{user `aws_source_ami`}}-{{timestamp}}",
 
     "ami_block_device_mappings": [
       {
         "device_name": "/dev/sdb",
         "volume_type": "gp2",
-        "volume_size": 256,
+        "volume_size": 20,
         "delete_on_termination": true
       }
     ],
@@ -50,9 +50,10 @@
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
-       "type": "shell",
-       "script": "scripts/mysql.sh",
-       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}' {{user `mysql_root_pwd`}}"
+      "type": "file",
+      "source": "files/index.html",
+      "destination": "/tmpindex.html"
+
     },
     {
       "type": "shell",
