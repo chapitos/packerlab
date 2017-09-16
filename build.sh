@@ -21,4 +21,4 @@ fi
 #             -var "aws_secret_key=$SECRET_KEY" \
 #             templates/mysql_anonymizer_ami_template.json
 
-packer build -var-file=vars/lab.json -var "aws_access_key=$ACCESS_KEY" -var "aws_secret_key=$SECRET_KEY" templates/demo_template.json
+packer build -force -var-file=vars/lab.json -var "aws_access_key=$ACCESS_KEY" -var "aws_secret_key=$SECRET_KEY" templates/demo_template.json
